@@ -1,40 +1,56 @@
 # Caturro Café — Landing
 
-Landing page oscura con estética underground y animaciones sutiles.
+Landing page oscura con estética underground, anillo de neón café alrededor del hero, marquee infinito y mapa embebido. Servida con Nginx (Docker), sin dependencias externas.
 
-## Desarrollo
+## Estructura
 
-- Abrir `index.html` en el navegador.
-- Estilos en `styles.css` y scripts en `script.js`.
-- Reemplaza el logo de ejemplo:
-  - Coloca tu archivo en `assets/logo.png` o `assets/logo.svg`.
-  - Actualiza la ruta en `index.html` si usas otro nombre.
+- `index.html`: marcado semántico y accesible.
+- `styles.css`: tema oscuro cálido, variables CSS, responsive.
+- `script.js`: interacciones (smooth scroll, reveal, parallax, marquee infinito, ajustes A11y).
+- `assets/`: imágenes y logotipo.
+- `Dockerfile` + `nginx.conf`: contenedor de producción.
+- `Makefile`: comandos de build/run/dev.
 
-## Docker
+## Desarrollo local
 
-Requisitos: Docker y Make.
+- Abrir `index.html` directamente o usar Docker.
+- Modo dev en Docker (monta los archivos con hot-reload de Nginx):
+  - `make build`
+  - `make dev` (abre `http://localhost:8080`)
+  - Cambia archivos y recarga el navegador.
+
+## Producción (Docker)
 
 - Build: `make build`
-- Run: `make run` (abre en `http://localhost:8080`)
+- Run: `make run`  → http://localhost:8080
 - Logs: `make logs`
 - Stop: `make stop`
+- Restart: `make restart`
 - Clean image: `make clean`
 
-Variables útiles:
+Variables opcionales: `PORT`, `IMAGE`, `TAG`
 
-```
-PORT=8081 IMAGE=caturro-cafe TAG=dev make run
-```
-
-## Secciones
-
-- Hero con logo, efecto “smoke” y grano.
-- Nosotros, Cafés destacados, Orígenes (timeline), Visítanos (info + mapa placeholder).
-- Marquee de texto y animaciones de aparición al hacer scroll.
+Ejemplo: `PORT=8081 IMAGE=caturro-cafe TAG=dev make run`
 
 ## Personalización rápida
 
-- Colores: variables CSS en `:root` (ej. `--accent`).
-- Tipografías: Google Fonts en el `<head>`.
-- Cards de cafés: editar en la sección `#coffee`.
-# caturro-cafe-landing-page
+- Colores: editar variables en `styles.css` (bloque `:root`).
+- Hero: el centro del motivo se ajusta con `--img-x` y `--img-y` en `styles.css`.
+- Texto del marquee: `index.html` → atributo `data-text` dentro de `.marquee .content`.
+- Mapa: `index.html` sección `Visítanos` (iframe de Google Maps).
+
+## Accesibilidad y rendimiento
+
+- `prefers-reduced-motion`: desactiva animaciones para usuarios sensibles.
+- `IntersectionObserver`: carga progresiva con animaciones suaves.
+- Marquee infinito: relleno dinámico según ancho de pantalla; velocidad estable.
+
+## Seguridad (Nginx)
+
+- `server_tokens off` y cabeceras: `X-Content-Type-Options`, `X-Frame-Options`, `Referrer-Policy`, `Permissions-Policy`.
+- `Content-Security-Policy` permisiva para fuentes de Google y el iframe de Google Maps.
+- Cache estática agresiva para `css/js/img/svg`, HTML sin cache.
+
+## Notas
+
+- Si usas una imagen JPG para el gato, el fondo negro se elimina visualmente con `mix-blend-mode: screen`. Para mayor control puedes subir un PNG/SVG con transparencia en `assets/` y actualizar el `src` en el hero.

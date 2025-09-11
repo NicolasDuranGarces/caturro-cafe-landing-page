@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="512" height="512" fill="black"/>
+  <!-- Placeholder monogram inspired by underground vibe. Replace with your logo. -->
+  <g filter="url(#g)">
+    <path d="M128 352c0-105 79-192 176-192 17 0 34 2 50 6v-26H288V96h128v128h-40c-25-18-55-28-88-28-84 0-152 68-152 152h-8z" fill="#67FFB3" fill-opacity="0.1"/>
+  </g>
+  <g filter="url(#glow)">
+    <text x="50%" y="56%" dominant-baseline="middle" text-anchor="middle" font-family="'Unica One', 'Space Grotesk', sans-serif" font-size="140" letter-spacing="2" fill="#E9F1EE">CC</text>
+  </g>
+  <defs>
+    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="4" result="b"/>
+      <feMerge>
+        <feMergeNode in="b"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <filter id="g" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="30"/>
+    </filter>
+  </defs>
+</svg>
+
