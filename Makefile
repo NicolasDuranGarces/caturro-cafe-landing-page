@@ -1,44 +1,37 @@
 # Variables
 IMAGE ?= caturro-cafe
 TAG ?= latest
-CONTAINER ?= caturro-cafe
 PORT ?= 5002
+DEV_PORT ?= 5003
+COMPOSE ?= docker compose
 
-.PHONY: build run stop restart logs shell clean status
+.PHONY: build run dev stop restart logs clean status
 
 build:
-	@echo "[+] Building $(IMAGE):$(TAG)"
-	docker build -t $(IMAGE):$(TAG) .
+	@echo "[+] Building production image"
+	$(COMPOSE) build app
 
-run: stop
-	@echo "[+] Running $(CONTAINER) on http://localhost:$(PORT)"
-	docker run -d --name $(CONTAINER) -p $(PORT):80 $(IMAGE):$(TAG)
+run:
+	@echo "[+] Running production on http://localhost:$(PORT)"
+	PORT=$(PORT) IMAGE=$(IMAGE) TAG=$(TAG) $(COMPOSE) up -d --build app
 
-dev: stop
-	@echo "[+] Dev mode (bind mount) on http://localhost:$(PORT)"
-	docker run -d --name $(CONTAINER) -p $(PORT):80 \
-	  -v $(PWD)/index.html:/usr/share/nginx/html/index.html:ro \
-	  -v $(PWD)/styles.css:/usr/share/nginx/html/styles.css:ro \
-	  -v $(PWD)/script.js:/usr/share/nginx/html/script.js:ro \
-	  -v $(PWD)/assets:/usr/share/nginx/html/assets:ro \
-	  $(IMAGE):$(TAG)
+dev:
+	@echo "[+] Running development on http://localhost:$(DEV_PORT)"
+	DEV_PORT=$(DEV_PORT) $(COMPOSE) --profile dev up -d app-dev
 
 stop:
-	@echo "[+] Stopping/removing $(CONTAINER) if exists"
-	-@docker rm -f $(CONTAINER) 2>/dev/null || true
+	@echo "[+] Stopping compose services"
+	$(COMPOSE) down --remove-orphans
 
 restart:
 	$(MAKE) run
 
 logs:
-	docker logs -f $(CONTAINER)
-
-shell:
-	docker exec -it $(CONTAINER) sh
+	$(COMPOSE) logs -f --tail=100
 
 status:
-	@docker ps --filter name=$(CONTAINER)
+	$(COMPOSE) ps
 
 clean:
-	@echo "[+] Removing image $(IMAGE):$(TAG)"
-	-@docker rmi $(IMAGE):$(TAG) 2>/dev/null || true
+	@echo "[+] Removing compose stack and local image cache"
+	$(COMPOSE) down --remove-orphans --rmi local
